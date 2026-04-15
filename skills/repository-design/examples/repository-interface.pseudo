@@ -1,0 +1,118 @@
+// リポジトリインターフェースの設計例（言語非依存の擬似コード）
+
+// === 基本的なリポジトリインターフェース ===
+
+interface OrderRepository:
+  // 取得
+  findById(id: OrderId) -> Order?
+  findByCustomerId(customerId: CustomerId) -> List<Order>
+  findPendingOrders() -> List<Order>
+
+  // 保存（新規・更新の両方を担う）
+  save(order: Order) -> void
+
+  // 削除
+  delete(order: Order) -> void
+
+  // ID生成（DB側で生成する場合）
+  nextId() -> OrderId
+
+  // 存在チェック
+  existsById(id: OrderId) -> boolean
+
+
+// === Specificationパターンを使ったリポジトリ ===
+
+interface OrderSpecification:
+  // 仕様の合成
+  and(other: OrderSpecification) -> OrderSpecification
+  or(other: OrderSpecification) -> OrderSpecification
+  not() -> OrderSpecification
+
+// 具体的な仕様
+PendingOrdersSpec implements OrderSpecification:
+  // status == PLACED の注文
+
+OverdueOrdersSpec implements OrderSpecification:
+  deadline: Date
+  // placedAt < deadline かつ status == PLACED の注文
+
+HighValueOrdersSpec implements OrderSpecification:
+  threshold: Money
+  // totalAmount > threshold の注文
+
+CustomerOrdersSpec implements OrderSpecification:
+  customerId: CustomerId
+  // 特定顧客の注文
+
+// 仕様を受け付けるリポジトリ
+interface OrderRepository:
+  findBySpec(spec: OrderSpecification) -> List<Order>
+  countBySpec(spec: OrderSpecification) -> Integer
+
+// 使用例
+overdueHighValueOrders = OverdueOrdersSpec(deadline)
+  .and(HighValueOrdersSpec(Money.of(100000, "JPY")))
+orders = orderRepository.findBySpec(overdueHighValueOrders)
+
+
+// === 集約全体を保存するリポジトリ ===
+
+// ✅ 正しい: 集約全体を操作する
+interface OrderRepository:
+  findById(id: OrderId) -> Order?
+  // Order + OrderItems + 関連する値オブジェクトすべてを保存
+  save(order: Order) -> void
+
+// ❌ 誤り: 子エンティティを個別に操作する
+interface OrderItemRepository:    // これは作ってはいけない
+  findByOrderId(orderId: OrderId) -> List<OrderItem>
+  save(item: OrderItem) -> void
+
+
+// === Unit of Work パターン ===
+
+interface UnitOfWork:
+  begin() -> void
+  commit() -> void
+  rollback() -> void
+
+// アプリケーション層での使用例
+PlaceOrderUseCase:
+  orderRepository: OrderRepository
+  stockRepository: StockRepository
+  unitOfWork: UnitOfWork
+
+  execute(command):
+    unitOfWork.begin()
+    try:
+      order = Order.create(command.customerId)
+      order.addItem(command.productId, command.quantity, command.unitPrice)
+      order.place()
+
+      orderRepository.save(order)
+      // 注: stockの更新はドメインイベント経由で行う（別トランザクション）
+
+      unitOfWork.commit()
+    catch exception:
+      unitOfWork.rollback()
+      throw exception
+
+
+// === 楽観的ロック対応 ===
+
+// 集約にバージョンを持たせる
+Order:
+  id: OrderId
+  version: Integer    // 楽観的ロック用
+
+// リポジトリ実装側でバージョンをチェック
+SqlOrderRepository implements OrderRepository:
+  save(order: Order):
+    rowsAffected = database.execute(
+      "UPDATE orders SET ... , version = ? WHERE id = ? AND version = ?",
+      order.version + 1, order.id, order.version
+    )
+    if rowsAffected == 0:
+      throw OptimisticLockException("注文が他のユーザーに更新された")
+    order.version = order.version + 1

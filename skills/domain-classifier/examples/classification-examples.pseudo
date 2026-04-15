@@ -1,0 +1,113 @@
+// ドメインロジック分類の具体例（言語非依存の擬似コード）
+
+// ============================================================
+// 例1: ドメイン層に属するロジック
+// ============================================================
+
+// ✅ ドメイン層: ビジネスルール（不変条件の検証）
+Order.addItem(productId, quantity, unitPrice):
+  assert this.status == DRAFT, "下書き状態でのみ追加可能"
+  assert quantity > 0, "数量は1以上"
+  // → 理由: 純粋なビジネスルール。外部依存なし
+
+// ✅ ドメイン層: 計算ロジック
+Order.totalAmount() -> Money:
+  return this.items
+    .map(item -> item.unitPrice.multiply(item.quantity))
+    .reduce(Money.zero(), Money::add)
+  // → 理由: ビジネス上の計算。I/Oなし
+
+// ✅ ドメイン層: 状態遷移ルール
+Order.cancel(reason):
+  assert this.status in [DRAFT, PLACED], "確定済みはキャンセル不可"
+  this.status = CANCELLED
+  this.addEvent(OrderCancelled(this.id, reason))
+  // → 理由: 状態遷移のビジネスルール
+
+// ✅ ドメイン層: ドメインサービス（複数エンティティにまたがるルール）
+PricingService.calculateDiscount(customer, order) -> Money:
+  if customer.isVIP() AND order.totalAmount().isGreaterThan(Money.of(10000)):
+    return order.totalAmount().multiply(0.1)
+  return Money.zero()
+  // → 理由: 複数の集約を参照するが、純粋なビジネスルール
+
+
+// ============================================================
+// 例2: アプリケーション層に属するロジック
+// ============================================================
+
+// ✅ アプリケーション層: オーケストレーション
+PlaceOrderUseCase.execute(command):
+  customer = customerRepository.findById(command.customerId)
+  order = Order.create(customer.id)
+  for item in command.items:
+    order.addItem(item.productId, item.quantity, item.unitPrice)
+  order.place()
+  orderRepository.save(order)
+  eventPublisher.publish(order.domainEvents())
+  // → 理由: リポジトリやイベント発行の調整。手順の制御
+
+// ✅ アプリケーション層: トランザクション管理
+TransferMoneyUseCase.execute(command):
+  unitOfWork.begin()
+  sourceAccount = accountRepository.findById(command.sourceId)
+  targetAccount = accountRepository.findById(command.targetId)
+  sourceAccount.withdraw(command.amount)   // ドメインロジック
+  targetAccount.deposit(command.amount)    // ドメインロジック
+  accountRepository.save(sourceAccount)
+  accountRepository.save(targetAccount)
+  unitOfWork.commit()
+  // → 理由: トランザクション境界の管理
+
+// ✅ アプリケーション層: 認可チェック
+CancelOrderUseCase.execute(command, currentUser):
+  order = orderRepository.findById(command.orderId)
+  if order.customerId != currentUser.id AND NOT currentUser.isAdmin():
+    throw UnauthorizedException("権限がない")
+  order.cancel(command.reason)   // ドメインロジック
+  orderRepository.save(order)
+  // → 理由: 認可は技術的関心事
+
+
+// ============================================================
+// 例3: インフラ層に属するロジック
+// ============================================================
+
+// ✅ インフラ層: データアクセスの実装
+SqlOrderRepository.findById(id: OrderId) -> Order:
+  row = database.query("SELECT * FROM orders WHERE id = ?", id.value)
+  items = database.query("SELECT * FROM order_items WHERE order_id = ?", id.value)
+  return OrderMapper.toDomain(row, items)
+  // → 理由: DB通信、SQL、データマッピング
+
+// ✅ インフラ層: 外部API通信
+StripePaymentAdapter.processPayment(payment):
+  response = httpClient.post("https://api.stripe.com/charges", payment.toRequest())
+  if response.status != 200:
+    throw PaymentGatewayException(response.error)
+  return PaymentResult.from(response)
+  // → 理由: 外部システムとの通信
+
+
+// ============================================================
+// 例4: よくある誤配置
+// ============================================================
+
+// ❌ 誤り: ドメインロジックがアプリケーション層にある
+PlaceOrderUseCase.execute(command):
+  order = Order.create(command.customerId)
+  // ❌ 割引計算がユースケースに漏れている
+  if command.totalAmount > 10000:
+    discount = command.totalAmount * 0.1
+  order.place()
+  // → 修正: 割引計算はドメインサービスまたはエンティティに移動する
+
+// ❌ 誤り: インフラ関心事がドメイン層にある
+Order.save():
+  database.insert("orders", this.toMap())
+  // → 修正: リポジトリパターンで永続化を分離する
+
+// ❌ 誤り: プレゼンテーション関心事がドメイン層にある
+Order.toJson() -> String:
+  return jsonSerializer.serialize(this)
+  // → 修正: DTOへの変換はプレゼンテーション層で行う

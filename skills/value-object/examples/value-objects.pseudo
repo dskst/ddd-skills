@@ -1,0 +1,162 @@
+// 代表的な Value Object の実装例（言語非依存の擬似コード）
+
+// === 単一属性の Value Object ===
+
+EmailAddress:
+  value: String
+
+  constructor(value: String):
+    assert value is not null, "メールアドレスは必須である"
+    assert value contains "@", "メールアドレスの形式が不正である"
+    assert value.length <= 256, "メールアドレスが長すぎる"
+    this.value = value.toLowerCase()
+
+  localPart() -> String:
+    return this.value.split("@")[0]
+
+  domain() -> String:
+    return this.value.split("@")[1]
+
+  equals(other: EmailAddress) -> boolean:
+    return this.value == other.value
+
+  toString() -> String:
+    return this.value
+
+
+// === 数値を持つ Value Object ===
+
+Money:
+  amount: Decimal
+  currency: CurrencyCode
+
+  constructor(amount: Decimal, currency: CurrencyCode):
+    assert currency is not null, "通貨は必須である"
+    this.amount = amount
+    this.currency = currency
+
+  // ファクトリメソッド
+  static of(amount: Decimal, currency: String) -> Money:
+    return Money(amount, CurrencyCode(currency))
+
+  static zero(currency: String) -> Money:
+    return Money(0, CurrencyCode(currency))
+
+  // 演算（通貨チェック付き）
+  add(other: Money) -> Money:
+    assert this.currency == other.currency, "異なる通貨間の加算はできない"
+    return Money(this.amount + other.amount, this.currency)
+
+  subtract(other: Money) -> Money:
+    assert this.currency == other.currency, "異なる通貨間の減算はできない"
+    return Money(this.amount - other.amount, this.currency)
+
+  multiply(factor: Decimal) -> Money:
+    return Money(this.amount * factor, this.currency)
+
+  // 比較
+  isGreaterThan(other: Money) -> boolean:
+    assert this.currency == other.currency
+    return this.amount > other.amount
+
+  isNegative() -> boolean:
+    return this.amount < 0
+
+  // 等価性
+  equals(other: Money) -> boolean:
+    return this.amount == other.amount AND this.currency == other.currency
+
+
+// === 範囲を表す Value Object ===
+
+DateRange:
+  startDate: Date
+  endDate: Date
+
+  constructor(startDate: Date, endDate: Date):
+    assert startDate is not null, "開始日は必須である"
+    assert endDate is not null, "終了日は必須である"
+    assert startDate <= endDate, "開始日は終了日以前でなければならない"
+    this.startDate = startDate
+    this.endDate = endDate
+
+  contains(date: Date) -> boolean:
+    return this.startDate <= date AND date <= this.endDate
+
+  overlaps(other: DateRange) -> boolean:
+    return this.startDate <= other.endDate AND other.startDate <= this.endDate
+
+  duration() -> Integer:
+    return daysBetween(this.startDate, this.endDate)
+
+  equals(other: DateRange) -> boolean:
+    return this.startDate == other.startDate AND this.endDate == other.endDate
+
+
+// === 複合 Value Object ===
+
+Address:
+  postalCode: PostalCode
+  prefecture: Prefecture
+  city: String
+  street: String
+  building: String?       // optional
+
+  constructor(postalCode, prefecture, city, street, building):
+    assert postalCode is not null
+    assert prefecture is not null
+    assert city is not blank, "市区町村は必須である"
+    assert street is not blank, "番地は必須である"
+    this.postalCode = postalCode
+    this.prefecture = prefecture
+    this.city = city
+    this.street = street
+    this.building = building
+
+  fullAddress() -> String:
+    base = this.prefecture + this.city + this.street
+    if this.building is not null:
+      return base + " " + this.building
+    return base
+
+  equals(other: Address) -> boolean:
+    return this.postalCode == other.postalCode
+       AND this.prefecture == other.prefecture
+       AND this.city == other.city
+       AND this.street == other.street
+       AND this.building == other.building
+
+
+// === 列挙型の Value Object ===
+
+OrderStatus:
+  value: Enum(DRAFT, PLACED, CONFIRMED, SHIPPED, DELIVERED, CANCELLED)
+
+  canTransitionTo(next: OrderStatus) -> boolean:
+    allowed = {
+      DRAFT:     [PLACED, CANCELLED],
+      PLACED:    [CONFIRMED, CANCELLED],
+      CONFIRMED: [SHIPPED],
+      SHIPPED:   [DELIVERED],
+      DELIVERED: [],
+      CANCELLED: []
+    }
+    return next in allowed[this.value]
+
+
+// === ID型の Value Object ===
+
+OrderId:
+  value: UUID
+
+  static generate() -> OrderId:
+    return OrderId(UUID.randomUUID())
+
+  static from(value: String) -> OrderId:
+    return OrderId(UUID.fromString(value))
+
+  equals(other: OrderId) -> boolean:
+    return this.value == other.value
+
+  toString() -> String:
+    return this.value.toString()

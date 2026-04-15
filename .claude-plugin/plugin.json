@@ -1,0 +1,9 @@
+{
+  "name": "ddd-skills",
+  "version": "0.1.0",
+  "description": "DDD（ドメイン駆動設計）の実践を包括的に支援するプラグイン。初心者から上級者まで、ユビキタス言語・集約設計・アンチパターン検知など12の機能を提供する。",
+  "author": {
+    "name": "dskst"
+  },
+  "keywords": ["ddd", "domain-driven-design", "architecture", "design-patterns"]
+}

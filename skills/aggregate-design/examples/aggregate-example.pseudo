@@ -1,0 +1,91 @@
+// 注文集約の設計例（言語非依存の擬似コード）
+
+// === 値オブジェクト ===
+
+OrderId:
+  value: UUID
+  equals(other): this.value == other.value
+
+Money:
+  amount: Decimal
+  currency: CurrencyCode
+
+  add(other: Money) -> Money:
+    assert this.currency == other.currency
+    return Money(this.amount + other.amount, this.currency)
+
+  multiply(factor: Decimal) -> Money:
+    return Money(this.amount * factor, this.currency)
+
+Quantity:
+  value: Integer
+
+  constructor(value):
+    assert value > 0, "数量は1以上でなければならない"
+    this.value = value
+
+// === 子エンティティ ===
+
+OrderItem:
+  id: OrderItemId          // 集約内でのみ有効な識別子
+  productId: ProductId     // 別集約へのID参照
+  quantity: Quantity
+  unitPrice: Money
+
+  subtotal() -> Money:
+    return this.unitPrice.multiply(this.quantity.value)
+
+// === 集約ルート ===
+
+Order:
+  // --- 状態 ---
+  id: OrderId
+  customerId: CustomerId   // 別集約へのID参照
+  items: List<OrderItem>
+  status: OrderStatus      // DRAFT, PLACED, CONFIRMED, CANCELLED
+  version: Integer         // 楽観的ロック用
+
+  // --- 不変条件 ---
+  // 1. 注文明細は最低1つ存在する（PLACED以降）
+  // 2. 合計金額は明細の合計と一致する
+  // 3. CANCELLED/CONFIRMED 状態の注文は変更できない
+
+  // --- ファクトリメソッド ---
+  static create(customerId: CustomerId) -> Order:
+    order = new Order()
+    order.id = OrderId.generate()
+    order.customerId = customerId
+    order.items = []
+    order.status = DRAFT
+    order.version = 0
+    return order
+
+  // --- ビジネス操作 ---
+  addItem(productId: ProductId, quantity: Quantity, unitPrice: Money):
+    assert this.status == DRAFT, "下書き状態でのみ明細を追加できる"
+    item = OrderItem(OrderItemId.generate(), productId, quantity, unitPrice)
+    this.items.add(item)
+
+  removeItem(itemId: OrderItemId):
+    assert this.status == DRAFT, "下書き状態でのみ明細を削除できる"
+    this.items.removeById(itemId)
+
+  place() -> List<DomainEvent>:
+    assert this.status == DRAFT, "下書き状態でのみ注文を確定できる"
+    assert this.items.isNotEmpty(), "注文明細が必要である"
+    this.status = PLACED
+    return [OrderPlaced(this.id, this.customerId, this.items, this.totalAmount())]
+
+  confirm() -> List<DomainEvent>:
+    assert this.status == PLACED, "注文済み状態でのみ確定できる"
+    this.status = CONFIRMED
+    return [OrderConfirmed(this.id)]
+
+  cancel(reason: CancellationReason) -> List<DomainEvent>:
+    assert this.status in [DRAFT, PLACED], "確定済み注文はキャンセルできない"
+    this.status = CANCELLED
+    return [OrderCancelled(this.id, reason)]
+
+  // --- 計算 ---
+  totalAmount() -> Money:
+    return this.items.map(item -> item.subtotal()).reduce(Money.zero(), Money::add)

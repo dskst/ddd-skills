@@ -1,0 +1,161 @@
+// 例外階層の設計例（言語非依存の擬似コード）
+
+// === 基底例外 ===
+
+DomainException:
+  message: String
+  errorCode: String
+
+  constructor(message, errorCode):
+    this.message = message
+    this.errorCode = errorCode
+
+
+// === 不変条件違反 ===
+
+InvariantViolationException extends DomainException:
+  constructor(message, errorCode):
+    super(message, errorCode)
+
+InsufficientStockException extends InvariantViolationException:
+  productId: ProductId
+  requested: Quantity
+  available: Quantity
+
+  constructor(productId, requested, available):
+    super(
+      "商品 " + productId + " の在庫が不足している（要求: " + requested + ", 在庫: " + available + "）",
+      "INV-001"
+    )
+    this.productId = productId
+    this.requested = requested
+    this.available = available
+
+InsufficientBalanceException extends InvariantViolationException:
+  accountId: AccountId
+  amount: Money
+  balance: Money
+
+  constructor(accountId, amount, balance):
+    super(
+      "残高不足（出金額: " + amount + ", 残高: " + balance + "）",
+      "ACC-001"
+    )
+
+OrderLimitExceededException extends InvariantViolationException:
+  limit: Integer
+  current: Integer
+
+  constructor(limit, current):
+    super(
+      "注文上限を超過している（上限: " + limit + ", 現在: " + current + "）",
+      "ORD-002"
+    )
+
+
+// === 存在条件違反 ===
+
+EntityNotFoundException extends DomainException:
+  entityType: String
+  identifier: String
+
+  constructor(entityType, identifier):
+    super(
+      entityType + " が見つからない（ID: " + identifier + "）",
+      "NOT-FOUND"
+    )
+
+OrderNotFoundException extends EntityNotFoundException:
+  constructor(orderId: OrderId):
+    super("注文", orderId.toString())
+    this.errorCode = "ORD-404"
+
+CustomerNotFoundException extends EntityNotFoundException:
+  constructor(customerId: CustomerId):
+    super("顧客", customerId.toString())
+    this.errorCode = "USR-404"
+
+ProductNotFoundException extends EntityNotFoundException:
+  constructor(productId: ProductId):
+    super("商品", productId.toString())
+    this.errorCode = "PRD-404"
+
+
+// === 状態遷移違反 ===
+
+InvalidStateTransitionException extends DomainException:
+  currentState: String
+  attemptedState: String
+
+  constructor(entityType, currentState, attemptedState):
+    super(
+      entityType + " の状態遷移が不正である（" + currentState + " → " + attemptedState + "）",
+      "STATE-ERR"
+    )
+
+OrderAlreadyCancelledException extends InvalidStateTransitionException:
+  orderId: OrderId
+
+  constructor(orderId):
+    super("注文", "CANCELLED", "任意の状態")
+    this.errorCode = "ORD-003"
+    this.orderId = orderId
+
+OrderAlreadyConfirmedException extends InvalidStateTransitionException:
+  orderId: OrderId
+
+  constructor(orderId):
+    super("注文", "CONFIRMED", "変更不可")
+    this.errorCode = "ORD-004"
+    this.orderId = orderId
+
+
+// === 使用例 ===
+
+// Value Object での使用
+EmailAddress:
+  constructor(value):
+    if value is null or blank:
+      throw InvariantViolationException("メールアドレスは必須である", "VAL-001")
+    if not value.matches(EMAIL_PATTERN):
+      throw InvariantViolationException("メールアドレスの形式が不正である", "VAL-002")
+
+// エンティティでの使用
+Order:
+  cancel(reason):
+    if this.status == CANCELLED:
+      throw OrderAlreadyCancelledException(this.id)
+    if this.status == CONFIRMED:
+      throw OrderAlreadyConfirmedException(this.id)
+    this.status = CANCELLED
+
+// ドメインサービスでの使用
+StockService:
+  reserve(productId, quantity):
+    stock = stockRepository.findByProductId(productId)
+    if stock is null:
+      throw ProductNotFoundException(productId)
+    if stock.available < quantity:
+      throw InsufficientStockException(productId, quantity, stock.available)
+    stock.reserve(quantity)
+
+
+// === アプリケーション層での例外変換 ===
+
+// ドメイン例外 → HTTPレスポンスへの変換
+ExceptionHandler:
+  handle(exception):
+    match exception:
+      InvariantViolationException  -> HttpResponse(422, errorBody(exception))
+      EntityNotFoundException      -> HttpResponse(404, errorBody(exception))
+      InvalidStateTransitionException -> HttpResponse(409, errorBody(exception))
+      DomainException              -> HttpResponse(400, errorBody(exception))
+      otherwise                    -> HttpResponse(500, "内部エラー")
+
+  errorBody(exception: DomainException) -> ErrorResponse:
+    return {
+      "error": {
+        "code": exception.errorCode,
+        "message": exception.message
+      }
+    }
