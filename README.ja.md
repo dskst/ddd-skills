@@ -36,6 +36,18 @@ DDD（ドメイン駆動設計）の実践を包括的に支援する Claude Cod
 
 ## インストール
 
+```
+/plugin marketplace add dskst/ddd-skills
+```
+
+マーケットプレイスを追加後、プラグインをインストールする:
+
+```
+/plugin install ddd-skills
+```
+
+### 代替方法（ローカル）
+
 ```bash
 claude --plugin-dir /path/to/ddd-skills
 ```

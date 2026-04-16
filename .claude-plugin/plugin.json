@@ -1,9 +1,15 @@
 {
   "name": "ddd-skills",
   "version": "0.1.0",
-  "description": "DDD（ドメイン駆動設計）の実践を包括的に支援するプラグイン。初心者から上級者まで、ユビキタス言語・集約設計・アンチパターン検知など12の機能を提供する。",
+  "description": "A comprehensive Claude Code plugin for Domain-Driven Design (DDD) practices. Covers strategic design to tactical patterns with 12 features.",
   "author": {
-    "name": "dskst"
+    "name": "dskst",
+    "url": "https://github.com/dskst"
   },
-  "keywords": ["ddd", "domain-driven-design", "architecture", "design-patterns"]
+  "homepage": "https://github.com/dskst/ddd-skills",
+  "repository": "https://github.com/dskst/ddd-skills",
+  "license": "MIT",
+  "keywords": ["ddd", "domain-driven-design", "architecture", "design-patterns"],
+  "skills": "./skills/",
+  "agents": "./agents/"
 }

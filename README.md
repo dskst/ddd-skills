@@ -36,6 +36,18 @@ Available proactively (auto-trigger) and reactively (explicit request).
 
 ## Installation
 
+```
+/plugin marketplace add dskst/ddd-skills
+```
+
+Then install the plugin from the marketplace:
+
+```
+/plugin install ddd-skills
+```
+
+### Alternative (local)
+
 ```bash
 claude --plugin-dir /path/to/ddd-skills
 ```
