@@ -10,6 +10,5 @@
   "repository": "https://github.com/dskst/ddd-skills",
   "license": "MIT",
   "keywords": ["ddd", "domain-driven-design", "architecture", "design-patterns"],
-  "skills": "./skills/",
-  "agents": "./agents/"
+  "skills": "./skills/"
 }
