@@ -1,0 +1,21 @@
+{
+  "name": "dskst-ddd-skills",
+  "owner": {
+    "name": "dskst",
+    "email": "github@dskst"
+  },
+  "plugins": [
+    {
+      "name": "ddd-skills",
+      "source": "./",
+      "description": "A comprehensive Claude Code plugin for Domain-Driven Design (DDD) practices. Covers strategic design to tactical patterns with 12 features.",
+      "version": "0.1.0",
+      "author": {
+        "name": "dskst"
+      },
+      "repository": "https://github.com/dskst/ddd-skills",
+      "license": "MIT",
+      "keywords": ["ddd", "domain-driven-design", "architecture", "design-patterns"]
+    }
+  ]
+}
