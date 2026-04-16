@@ -1,5 +1,5 @@
 ---
-name: 境界づけられたコンテキスト
+name: bounded-context
 description: >-
   This skill should be used when the user asks to "境界づけられたコンテキストを抽出する",
   "コンテキスト境界を分析する", "コンテキストマップを作成する", "bounded contextを設計する",

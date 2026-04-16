@@ -1,5 +1,5 @@
 ---
-name: ドメインイベント抽出
+name: domain-event
 description: >-
   This skill should be used when the user asks to "ドメインイベントを抽出する",
   "イベントストーミングをする", "ドメインイベントを設計する", "イベントを洗い出す",

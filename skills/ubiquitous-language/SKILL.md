@@ -1,5 +1,5 @@
 ---
-name: ユビキタス言語管理
+name: ubiquitous-language
 description: >-
   This skill should be used when the user asks to "ユビキタス言語を定義する", "用語集を作成する",
   "ドメイン用語を整理する", "用語の一貫性をチェックする", "ubiquitous languageを管理する",

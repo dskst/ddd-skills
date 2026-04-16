@@ -1,5 +1,5 @@
 ---
-name: ドメインロジック分類
+name: domain-classifier
 description: >-
   This skill should be used when the user asks to "このロジックはドメインか", "ドメインに置くべきか",
   "ドメイン層かアプリケーション層か判定する", "ロジックの配置先を決める",

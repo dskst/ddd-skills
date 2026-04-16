@@ -1,5 +1,5 @@
 ---
-name: Value Object設計
+name: value-object
 description: >-
   This skill should be used when the user asks to "Value Objectを作る", "値オブジェクトを設計する",
   "VOを抽出する", "プリミティブ型を置き換える", "value objectを実装する",

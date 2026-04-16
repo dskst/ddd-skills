@@ -1,5 +1,5 @@
 ---
-name: 例外設計
+name: exception-design
 description: >-
   This skill should be used when the user asks to "ドメイン例外を設計する", "例外クラスを作る",
   "エラーハンドリングを設計する", "例外の分類を整理する", "ビジネスエラーを定義する",

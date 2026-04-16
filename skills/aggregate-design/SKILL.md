@@ -1,5 +1,5 @@
 ---
-name: 集約設計
+name: aggregate-design
 description: >-
   This skill should be used when the user asks to "集約を設計する", "集約ルートを決める",
   "集約の境界を定義する", "aggregate designをする", "集約の不変条件を定義する",

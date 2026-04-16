@@ -1,5 +1,5 @@
 ---
-name: リポジトリ設計
+name: repository-design
 description: >-
   This skill should be used when the user asks to "リポジトリを設計する", "repositoryインターフェースを作る",
   "永続化層を設計する", "リポジトリパターンを適用する", "集約の保存方法を決める",
