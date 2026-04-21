@@ -9,7 +9,7 @@
       "name": "ddd-skills",
       "source": "./",
       "description": "A comprehensive Claude Code plugin for Domain-Driven Design (DDD) practices. Covers strategic design to tactical patterns with 12 features.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "dskst"
       },

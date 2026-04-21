@@ -7,7 +7,7 @@ description: >-
   「コンテキスト間の関係を整理する」「マイクロサービス境界を決める」
   「サブドメインを分析する」「戦略的設計をする」「コンテキスト境界をレビューする」。
   または、境界づけられたコンテキスト、コンテキストマップ、context mapping に言及する場合にも使う。
-version: 0.1.0
+version: 0.1.1
 argument-hint: "[ドメインやシステムの説明]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---

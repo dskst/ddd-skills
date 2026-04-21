@@ -7,7 +7,7 @@ description: >-
   「トランザクション境界を決める」「集約のサイズを見直す」「集約をレビューする」
   「集約を分割する」「集約の設計を改善する」。
   または、集約、集約ルート、aggregate root、トランザクション境界、不変条件に言及する場合にも使う。
-version: 0.1.0
+version: 0.1.1
 argument-hint: "[エンティティ名やドメインの説明]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---

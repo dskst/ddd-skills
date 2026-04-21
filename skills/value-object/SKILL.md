@@ -7,7 +7,7 @@ description: >-
   「型を定義する」「ドメインの値を設計する」「値オブジェクトをレビューする」
   「イミュータブルにする」「不変オブジェクトを作る」。
   または、Value Object、値オブジェクト、VO、プリミティブ型の置き換え、型安全に言及する場合にも使う。
-version: 0.1.0
+version: 0.1.1
 argument-hint: "[対象のエンティティや値]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---

@@ -6,7 +6,7 @@ description: >-
   「ドメイン用語を整理する」「用語の一貫性をチェックする」「ubiquitous languageを管理する」
   「ドメインの言葉を統一する」「用語の命名をレビューする」「英語名を決める」「用語を翻訳する」。
   または、ユビキタス言語、用語集、ドメイン用語、bounded context の言葉の定義に言及する場合にも使う。
-version: 0.1.0
+version: 0.1.1
 argument-hint: "[コンテキスト名や用語]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---

@@ -7,7 +7,7 @@ description: >-
   「domain eventを定義する」「イベント駆動にする」「イベント設計をレビューする」
   「イベントの粒度を見直す」。
   または、ドメインイベント、イベントストーミング、event storming、イベント駆動に言及する場合にも使う。
-version: 0.1.0
+version: 0.1.1
 argument-hint: "[ドメインやビジネスプロセスの説明]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---
