@@ -1,11 +1,11 @@
 ---
 name: ubiquitous-language
 description: >-
-  This skill should be used when the user asks to "ユビキタス言語を定義する", "用語集を作成する",
-  "ドメイン用語を整理する", "用語の一貫性をチェックする", "ubiquitous languageを管理する",
-  "ドメインの言葉を統一する", "用語の命名をレビューする", "英語名を決める", "用語を翻訳する",
-  or mentions ユビキタス言語、用語集、ドメイン用語、bounded context の言葉の定義。
-  DDD におけるユビキタス言語の定義・管理・一貫性チェック・用語集ファイル生成を支援する。
+  ユビキタス言語の定義・管理・一貫性チェック・用語集ファイル生成を支援する。
+  次のような依頼があったときに使う:「ユビキタス言語を定義する」「用語集を作成する」
+  「ドメイン用語を整理する」「用語の一貫性をチェックする」「ubiquitous languageを管理する」
+  「ドメインの言葉を統一する」「用語の命名をレビューする」「英語名を決める」「用語を翻訳する」。
+  または、ユビキタス言語、用語集、ドメイン用語、bounded context の言葉の定義に言及する場合にも使う。
 version: 0.1.0
 argument-hint: "[コンテキスト名や用語]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]

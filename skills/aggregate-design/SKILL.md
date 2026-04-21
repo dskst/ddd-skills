@@ -1,12 +1,12 @@
 ---
 name: aggregate-design
 description: >-
-  This skill should be used when the user asks to "集約を設計する", "集約ルートを決める",
-  "集約の境界を定義する", "aggregate designをする", "集約の不変条件を定義する",
-  "トランザクション境界を決める", "集約のサイズを見直す", "集約をレビューする",
-  "集約を分割する", "集約の設計を改善する",
-  or mentions 集約、集約ルート、aggregate root、トランザクション境界、不変条件。
-  DDD における集約ルート・境界・不変条件の設計を支援する。
+  集約ルート・境界・不変条件の設計を支援する。
+  次のような依頼があったときに使う:「集約を設計する」「集約ルートを決める」
+  「集約の境界を定義する」「aggregate designをする」「集約の不変条件を定義する」
+  「トランザクション境界を決める」「集約のサイズを見直す」「集約をレビューする」
+  「集約を分割する」「集約の設計を改善する」。
+  または、集約、集約ルート、aggregate root、トランザクション境界、不変条件に言及する場合にも使う。
 version: 0.1.0
 argument-hint: "[エンティティ名やドメインの説明]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]

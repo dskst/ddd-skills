@@ -1,12 +1,12 @@
 ---
 name: value-object
 description: >-
-  This skill should be used when the user asks to "Value Objectを作る", "値オブジェクトを設計する",
-  "VOを抽出する", "プリミティブ型を置き換える", "value objectを実装する",
-  "型を定義する", "ドメインの値を設計する", "値オブジェクトをレビューする",
-  "イミュータブルにする", "不変オブジェクトを作る",
-  or mentions Value Object、値オブジェクト、VO、プリミティブ型の置き換え、型安全。
-  DDD における Value Object の候補特定と実装を支援する。
+  Value Object の候補特定と実装を支援する。
+  次のような依頼があったときに使う:「Value Objectを作る」「値オブジェクトを設計する」
+  「VOを抽出する」「プリミティブ型を置き換える」「value objectを実装する」
+  「型を定義する」「ドメインの値を設計する」「値オブジェクトをレビューする」
+  「イミュータブルにする」「不変オブジェクトを作る」。
+  または、Value Object、値オブジェクト、VO、プリミティブ型の置き換え、型安全に言及する場合にも使う。
 version: 0.1.0
 argument-hint: "[対象のエンティティや値]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
