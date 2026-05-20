@@ -1,0 +1,20 @@
+---
+id: should-not-trigger-001
+name: イベント設計と無関係な依頼
+description: |
+  ドメインイベント・イベントストーミングと無関係な依頼にスキルが過剰反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "docker compose の基本的な使い方を教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "ドメインイベント"
+    - "イベントストーミング"
+    - "過去形"
+    - "domain event"

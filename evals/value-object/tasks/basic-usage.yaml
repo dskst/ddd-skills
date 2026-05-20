@@ -1,0 +1,48 @@
+---
+id: basic-usage-001
+name: 代表的な Value Object の設計（ハッピーパス）
+description: |
+  メールアドレス・金額・住所の Value Object を設計させ、
+  不変・等価性・自己検証の三要件を満たす設計を提案できるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    以下の値について、それぞれ Value Object として設計してほしい。
+    各 VO の不変条件、検証ロジック、振る舞いも提案してほしい。
+
+    - メールアドレス
+    - 金額（通貨を含む）
+    - 住所
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_immutability
+    weight: 2.0
+    config:
+      regex_match:
+        - "不変|immutable|イミュータブル"
+  - type: text
+    name: mentions_equality
+    weight: 2.0
+    config:
+      regex_match:
+        - "等価性|equality|equals|属性.*等しけれ"
+  - type: text
+    name: mentions_self_validation
+    config:
+      regex_match:
+        - "自己検証|self-validation|生成時.*検証|コンストラクタ.*検証|不正な値|assert|不変条件|constructor.*assert|raise.*Invalid"
+  - type: text
+    name: proposes_named_value_objects
+    config:
+      regex_match:
+        - "EmailAddress|Money|Address"

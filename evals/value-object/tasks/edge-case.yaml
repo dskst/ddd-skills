@@ -1,0 +1,34 @@
+---
+id: edge-case-001
+name: Primitive Obsession のリファクタ提案
+description: |
+  プリミティブ型を多用したコードを提示し、Value Object 抽出の提案ができるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このコードはプリミティブ型でドメイン値を扱っている。
+    Value Object として抽出すべき候補と、その理由・設計案を提示してほしい。
+  files:
+    - path: primitive_user.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: detects_primitive_obsession
+    weight: 2.0
+    config:
+      regex_match:
+        - "Primitive Obsession|プリミティブ|VO 候補|VO候補|Value Object 候補|無検証|形式ルール|エンティティ.*漏れ|常にペアで|複合概念|複合 VO|複合VO"
+  - type: text
+    name: proposes_value_object_extraction
+    config:
+      regex_match:
+        - "EmailAddress|PhoneNumber|Money|Address|Url|Quantity"

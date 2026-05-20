@@ -1,0 +1,19 @@
+---
+id: should-not-trigger-001
+name: 層分類と無関係な依頼
+description: |
+  ロジックの層配置と無関係な依頼にスキルが過剰反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "正規表現でメールアドレスを検証する書き方を教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "ドメイン層に属する"
+    - "アプリケーション層に属する"
+    - "判定ツリー"

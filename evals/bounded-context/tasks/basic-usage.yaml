@@ -1,0 +1,39 @@
+---
+id: basic-usage-001
+name: EC サイトのコンテキスト抽出（ハッピーパス）
+description: |
+  EC サイトを題材にコンテキストを抽出し、関係パターンを提示できるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    EC サイトのドメインで境界づけられたコンテキストを抽出してほしい。
+    販売・配送・会計・在庫が主要な機能としてある。
+    コンテキスト候補と、コンテキスト間の関係パターンを提案してほしい。
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_bounded_context
+    weight: 2.0
+    config:
+      regex_match:
+        - "境界づけられたコンテキスト|bounded context|Bounded Context|コンテキスト候補|コンテキスト境界|コンテキストマップ"
+  - type: text
+    name: mentions_context_relationship_patterns
+    weight: 2.0
+    config:
+      regex_match:
+        - "Partnership|Customer-Supplier|Conformist|Anti-Corruption Layer|Shared Kernel|Open Host Service|Published Language|Separate Ways"
+  - type: text
+    name: highlights_context_specific_meaning
+    config:
+      regex_match:
+        - "ユビキタス言語|ubiquitous language|意味が異なる|別の名前|別名|呼称が異なる|コンテキストで.*異なる|独自のモデル"

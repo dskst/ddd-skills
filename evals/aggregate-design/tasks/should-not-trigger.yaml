@@ -1,0 +1,20 @@
+---
+id: should-not-trigger-001
+name: 集約設計と無関係な依頼
+description: |
+  集約設計と関係ない依頼に対してスキルが過剰に反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "Python の list と tuple の使い分けを教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "集約ルート"
+    - "aggregate root"
+    - "不変条件"
+    - "トランザクション境界"

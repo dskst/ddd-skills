@@ -1,0 +1,35 @@
+---
+id: edge-case-001
+name: 層が混在したコードのレビュー
+description: |
+  ドメイン層クラスにアプリケーション/インフラの責務が混入したコードを提示し、
+  誤配置の指摘と移動先の提案ができるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このドメイン層のクラスをレビューしてほしい。
+    層の責務として不適切なロジックがあれば指摘し、移動先を提案してほしい。
+  files:
+    - path: order_service.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: identifies_misplacement
+    weight: 2.0
+    config:
+      regex_match:
+        - "誤配置|不適切|混入|漏れ|分離すべき|配置すべき"
+  - type: text
+    name: proposes_move_target_layer
+    config:
+      regex_match:
+        - "アプリケーション層|インフラ層|プレゼンテーション層"

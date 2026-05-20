@@ -1,0 +1,21 @@
+---
+id: should-not-trigger-001
+name: 例外設計と無関係な依頼
+description: |
+  例外設計と全く関係のない依頼に対して、スキルが過剰に反応しないことを検証する。
+  ドメイン例外の分類や階層構造の説明を返すべきではない。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "最近の git の便利なコマンドをいくつか教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "ドメイン例外"
+    - "不変条件違反"
+    - "存在条件違反"
+    - "DomainException"

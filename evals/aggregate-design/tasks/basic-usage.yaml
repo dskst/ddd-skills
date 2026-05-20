@@ -1,0 +1,45 @@
+---
+id: basic-usage-001
+name: 注文集約の設計（ハッピーパス）
+description: |
+  注文ドメインの集約をゼロから設計する依頼。
+  集約ルート、不変条件、トランザクション境界、ID 参照の原則を提示できるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    EC サイトの注文ドメインで集約を設計してほしい。
+    注文・注文明細・顧客・在庫が登場する。
+    集約ルート、集約に含めるエンティティ、不変条件、トランザクション境界を提案してほしい。
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_aggregate_root
+    weight: 2.0
+    config:
+      regex_match:
+        - "集約ルート|aggregate root|Aggregate Root"
+  - type: text
+    name: mentions_invariants
+    weight: 2.0
+    config:
+      regex_match:
+        - "不変条件|invariant"
+  - type: text
+    name: mentions_transaction_boundary
+    config:
+      regex_match:
+        - "トランザクション境界|トランザクション整合性|1トランザクション"
+  - type: text
+    name: mentions_id_reference_between_aggregates
+    config:
+      regex_match:
+        - "ID で参照|ID参照|IDによる参照|オブジェクト参照を持たない|別集約"

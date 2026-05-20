@@ -1,0 +1,40 @@
+---
+id: edge-case-001
+name: God Aggregate のレビュー
+description: |
+  巨大な集約クラスを提示し、分割の提案ができるかを検証する。
+  集約サイズの指針、結果整合性、ドメインイベントへの言及を期待する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    この集約クラスをレビューしてほしい。
+    サイズが妥当か、分割すべきか、根拠と一緒に判断してほしい。
+  files:
+    - path: god_order_aggregate.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: identifies_god_aggregate
+    weight: 2.0
+    config:
+      regex_match:
+        - "God Aggregate|巨大|肥大|大きすぎ|分割"
+  - type: text
+    name: proposes_split
+    config:
+      regex_match:
+        - "別集約|分割|小さな集約|小さい集約"
+  - type: text
+    name: mentions_eventual_consistency_or_event
+    config:
+      regex_match:
+        - "結果整合性|ドメインイベント|domain event"

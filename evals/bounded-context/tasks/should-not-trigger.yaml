@@ -1,0 +1,20 @@
+---
+id: should-not-trigger-001
+name: コンテキスト分析と無関係な依頼
+description: |
+  境界づけられたコンテキストと無関係な依頼にスキルが過剰反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "npm install と npm ci の違いを教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "境界づけられたコンテキスト"
+    - "bounded context"
+    - "コンテキストマップ"
+    - "Anti-Corruption Layer"

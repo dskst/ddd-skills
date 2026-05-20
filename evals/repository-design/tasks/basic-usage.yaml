@@ -1,0 +1,39 @@
+---
+id: basic-usage-001
+name: Order 集約のリポジトリ設計（ハッピーパス）
+description: |
+  Order 集約に対するリポジトリインターフェースを設計させ、
+  1集約=1リポジトリ、findById/save、ドメイン用語命名に従えるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    Order 集約のリポジトリインターフェースを設計してほしい。
+    必要なメソッド、戻り値、検索メソッドの命名、Specification の利用可否を提案してほしい。
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: defines_find_by_id_and_save
+    weight: 2.0
+    config:
+      regex_match:
+        - "findById|find_by_id"
+        - "save"
+  - type: text
+    name: mentions_one_aggregate_one_repository
+    config:
+      regex_match:
+        - "1集約.*1リポジトリ|集約単位|集約ごと|1つの集約|集約内の子|子エンティティ.*個別|OrderItemRepository.*作らない|OrderItemRepository.*不要"
+  - type: text
+    name: mentions_domain_layer_or_port
+    config:
+      regex_match:
+        - "ドメイン層|ポート|インターフェース|interface"

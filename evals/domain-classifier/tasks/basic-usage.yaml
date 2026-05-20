@@ -1,0 +1,49 @@
+---
+id: basic-usage-001
+name: 複数ロジックの層分類（ハッピーパス）
+description: |
+  典型的なロジックを列挙し、各々をドメイン/アプリケーション/インフラのどの層に配置すべきか判定できるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    以下のロジックそれぞれについて、ドメイン層・アプリケーション層・インフラ層のどこに配置すべきか、
+    根拠と一緒に判定してほしい。
+
+    1. 注文合計金額の計算
+    2. 注文確定 → 在庫引当 → 通知送信のオーケストレーション
+    3. メールアドレス形式のバリデーション
+    4. SMTP サーバーへのメール送信
+    5. DB からの注文取得
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_domain_layer
+    weight: 2.0
+    config:
+      regex_match:
+        - "ドメイン層|domain layer"
+  - type: text
+    name: mentions_application_layer
+    weight: 2.0
+    config:
+      regex_match:
+        - "アプリケーション層|ユースケース層|application layer|usecase"
+  - type: text
+    name: mentions_infrastructure_layer
+    config:
+      regex_match:
+        - "インフラ層|インフラストラクチャ|infrastructure"
+  - type: text
+    name: classifies_orchestration_as_application
+    config:
+      regex_match:
+        - "オーケストレーション|手順の制御|調整"

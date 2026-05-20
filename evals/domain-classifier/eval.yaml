@@ -1,0 +1,28 @@
+---
+name: domain-classifier-eval
+description: domain-classifier スキルがロジックの層配置（ドメイン/アプリケーション/インフラ）判定を支援できるかを検証する評価スイート。
+skill: domain-classifier
+version: "1.0"
+
+config:
+  trials_per_task: 1
+  timeout_seconds: 300
+  parallel: false
+  executor: copilot-sdk
+  model: claude-opus-4.6
+
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: スキルが依頼されたタスクを完了できたか
+
+graders:
+  - type: code
+    name: has_substantial_output
+    config:
+      assertions:
+        - "len(output) > 200"
+
+tasks:
+  - "tasks/*.yaml"

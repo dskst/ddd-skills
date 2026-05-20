@@ -1,0 +1,35 @@
+---
+id: edge-case-001
+name: SQL 漏洩リポジトリのレビュー
+description: |
+  SQL 用語が漏れているリポジトリインターフェースを提示し、
+  ドメイン用語への置き換えを提案できるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このリポジトリインターフェースをレビューしてほしい。
+    アンチパターンがあれば指摘し、ドメイン用語に基づく命名へ修正案を提示してほしい。
+  files:
+    - path: sql_order_repository.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: identifies_sql_leakage
+    weight: 2.0
+    config:
+      regex_match:
+        - "SQL|select|insert|update|漏れ|漏洩|technical|technicalなクエリ|技術的"
+  - type: text
+    name: proposes_domain_named_method
+    config:
+      regex_match:
+        - "findBy|find_by|findPending|find_pending|findOverdue|find_overdue|findByCustomer|find_by_customer|findByStatus|find_by_status|exists"

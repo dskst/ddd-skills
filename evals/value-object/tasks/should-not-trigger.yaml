@@ -1,0 +1,20 @@
+---
+id: should-not-trigger-001
+name: Value Object と無関係な依頼
+description: |
+  Value Object と無関係な依頼にスキルが過剰反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "Markdown でテーブルを書く構文を教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "Value Object"
+    - "値オブジェクト"
+    - "プリミティブ型"
+    - "Primitive Obsession"

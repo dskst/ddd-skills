@@ -1,0 +1,41 @@
+---
+id: basic-usage-001
+name: 注文フローのイベント洗い出し（ハッピーパス）
+description: |
+  EC サイト購入フローのドメインイベントを洗い出させ、
+  過去形命名・コマンドとの分離・ポリシーへの言及ができるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    EC サイトの「注文 → 決済 → 出荷 → 配送完了」というビジネスプロセスについて、
+    ドメインイベントを抽出してほしい。
+    イベントの命名規則、対応するコマンド、ポリシー（反応する処理）も整理してほしい。
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: events_use_past_tense
+    weight: 2.0
+    config:
+      regex_match:
+        - "(Placed|Confirmed|Paid|Shipped|Delivered|Cancelled|Received|Issued)"
+  - type: text
+    name: mentions_command_vs_event
+    weight: 2.0
+    config:
+      regex_match:
+        - "コマンド"
+        - "ドメインイベント|domain event"
+  - type: text
+    name: mentions_policy_or_reaction
+    config:
+      regex_match:
+        - "ポリシー|リアクション|policy|反応"

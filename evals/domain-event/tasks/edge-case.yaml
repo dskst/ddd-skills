@@ -1,0 +1,35 @@
+---
+id: edge-case-001
+name: CRUD イベントのリファクタ
+description: |
+  汎用的な CRUD イベント (OrderUpdated 等) をドメインイベントとして再設計できるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このコードに定義されているイベントをレビューしてほしい。
+    ドメインイベントとして不適切なものがあれば、
+    具体的なビジネス事実を表す名前にリファクタする案を提示してほしい。
+  files:
+    - path: crud_events.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: identifies_crud_event_antipattern
+    weight: 2.0
+    config:
+      regex_match:
+        - "CRUD|汎用|具体的でない|抽象的|技術イベント|過去形"
+  - type: text
+    name: proposes_specific_business_event
+    config:
+      regex_match:
+        - "(Placed|Cancelled|Shipped|ItemAdded|ItemRemoved|AddressChanged|Confirmed|Refunded)"

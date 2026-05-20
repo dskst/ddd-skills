@@ -1,0 +1,58 @@
+---
+id: basic-usage-001
+name: 注文ドメインの例外設計（ハッピーパス）
+description: |
+  注文ドメインに対するドメイン例外を新規設計する依頼。
+  分類体系・命名・階層構造を提示できるかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    注文ドメインのドメイン例外を設計してほしい。
+    在庫不足、顧客が見つからない、キャンセル済み注文を再度キャンセルしようとした、
+    といったケースを扱える例外クラス階層を提案してほしい。
+
+expected:
+  should_trigger: true
+  output_contains:
+    - "Exception"
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_domain_exception_classification
+    weight: 2.0
+    config:
+      regex_match:
+        - "不変条件違反|存在条件違反|状態遷移違反|整合性違反"
+  - type: text
+    name: uses_domain_named_exceptions
+    weight: 2.0
+    config:
+      regex_match:
+        - "(Insufficient|NotFound|AlreadyCancelled|AlreadyShipped|Invalid[A-Z]|Exceeded)[A-Za-z]*Exception"
+  - type: text
+    name: explains_hierarchy_or_layering
+    weight: 1.5
+    config:
+      regex_match:
+        - "DomainException|例外階層|ドメイン層|基底"
+  - type: text
+    name: covers_insufficient_stock
+    config:
+      regex_match:
+        - "InsufficientStock|在庫不足"
+  - type: text
+    name: covers_customer_not_found
+    config:
+      regex_match:
+        - "CustomerNotFound|顧客が見つからない|顧客.*存在しない"
+  - type: text
+    name: covers_already_cancelled
+    config:
+      regex_match:
+        - "AlreadyCancelled|キャンセル済み|既にキャンセル"

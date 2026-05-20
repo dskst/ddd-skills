@@ -1,0 +1,19 @@
+---
+id: should-not-trigger-001
+name: リポジトリ設計と無関係な依頼
+description: |
+  リポジトリ設計と無関係な依頼にスキルが過剰反応しないことを検証する。
+
+tags:
+  - anti-trigger
+  - negative-test
+
+inputs:
+  prompt: "git rebase と merge の違いを簡単に教えてほしい。"
+
+expected:
+  should_trigger: false
+  output_not_contains:
+    - "リポジトリインターフェース"
+    - "1集約 = 1リポジトリ"
+    - "Specification"

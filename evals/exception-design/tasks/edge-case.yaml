@@ -1,0 +1,54 @@
+---
+id: edge-case-001
+name: 汎用例外を投げているコードのレビュー
+description: |
+  既存コードが Exception / ValueError などの汎用例外を投げている。
+  ドメイン例外への置き換えと、アンチパターン指摘ができるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このコードのエラーハンドリングをレビューしてほしい。
+    ドメイン例外として再設計するなら、どのような例外クラスに置き換えるべきか提案してほしい。
+  files:
+    - path: order_service.py
+
+expected:
+  should_trigger: true
+  output_not_contains:
+    - "問題ありません"
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: mentions_domain_exception_classification
+    weight: 2.0
+    config:
+      regex_match:
+        - "不変条件違反|存在条件違反|状態遷移違反|整合性違反"
+  - type: text
+    name: uses_domain_named_exceptions
+    weight: 2.0
+    config:
+      regex_match:
+        - "(Insufficient|NotFound|AlreadyCancelled|AlreadyShipped|Invalid[A-Z]|Exceeded)[A-Za-z]*Exception"
+  - type: text
+    name: explains_hierarchy_or_layering
+    weight: 1.5
+    config:
+      regex_match:
+        - "DomainException|例外階層|ドメイン層|基底"
+  - type: text
+    name: identifies_generic_exception_problem
+    config:
+      regex_match:
+        - "汎用例外|汎用的な例外|generic exception|抽象的"
+  - type: text
+    name: proposes_domain_exception_replacement
+    config:
+      regex_match:
+        - "(Insufficient|NotFound|AlreadyCancelled|AlreadyShipped|Invalid[A-Z])[A-Za-z]*Exception"

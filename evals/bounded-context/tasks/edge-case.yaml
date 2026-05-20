@@ -1,0 +1,35 @@
+---
+id: edge-case-001
+name: コンテキストマップの mermaid 生成
+description: |
+  既存モジュール構造を題材に mermaid 形式のコンテキストマップを生成できるかを検証する。
+
+tags:
+  - edge-case
+  - artifact-generation
+
+inputs:
+  prompt: |
+    このモジュール構成を読み、コンテキストマップを mermaid 図として作成してほしい。
+    レスポンス本文中に mermaid のコードブロックを必ず含めること。
+    コンテキスト間の関係パターンも図中またはレスポンス内に明記してほしい。
+  files:
+    - path: domain_modules.md
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: emits_or_writes_mermaid
+    weight: 2.0
+    config:
+      regex_match:
+        - "```mermaid|mermaid|context-map\\.md|コンテキストマップ"
+  - type: text
+    name: includes_relationship_pattern
+    config:
+      regex_match:
+        - "Customer-Supplier|Anti-Corruption Layer|Published Language|Shared Kernel|Partnership|Conformist|Open Host Service"

@@ -1,0 +1,40 @@
+---
+id: basic-usage-001
+name: 注文ドメインの用語集作成（ハッピーパス）
+description: |
+  注文ドメインに関するユビキタス言語の用語集を作成させ、
+  英語名・定義・例・コンテキスト指定が伴うかを検証する。
+
+tags:
+  - basic
+  - happy-path
+
+inputs:
+  prompt: |
+    EC サイトの販売コンテキストにおけるユビキタス言語の用語集を作ってほしい。
+    「注文」「注文明細」「顧客」「商品」「在庫」「カート」を対象に、
+    日本語名・英語名・定義・例・使ってはいけない同義語を表形式で整理してほしい。
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: produces_glossary_table
+    weight: 2.0
+    config:
+      regex_match:
+        - "用語"
+        - "英語名|Order|Customer|Product"
+  - type: text
+    name: mentions_bounded_context
+    config:
+      regex_match:
+        - "境界づけられたコンテキスト|bounded context|販売コンテキスト|コンテキスト"
+  - type: text
+    name: mentions_synonym_exclusion
+    config:
+      regex_match:
+        - "同義語|使ってはいけない|使わない"

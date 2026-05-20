@@ -1,0 +1,35 @@
+---
+id: edge-case-001
+name: 同義語混在コードの一貫性チェック
+description: |
+  Customer/Client が混在するコードを提示し、用語の不統一の検出と修正提案ができるかを検証する。
+
+tags:
+  - edge-case
+  - review
+
+inputs:
+  prompt: |
+    このコードのドメイン用語をレビューしてほしい。
+    用語集の観点で問題があれば指摘し、統一案を提示してほしい。
+  files:
+    - path: customer_client_mixed.py
+
+expected:
+  should_trigger: true
+  outcomes:
+    - type: task_completed
+
+graders:
+  - type: text
+    name: detects_synonym_inconsistency
+    weight: 2.0
+    config:
+      regex_match:
+        - "同義語|混在|不統一|不一致|統一"
+  - type: text
+    name: proposes_one_canonical_term
+    config:
+      regex_match:
+        - "Customer|Client"
+        - "統一|どちらかに|1つに"

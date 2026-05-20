@@ -1,0 +1,36 @@
+---
+name: exception-design-eval
+description: exception-design スキルがドメイン例外の設計・分類・階層構造を適切に支援できるかを検証する評価スイート。
+skill: exception-design
+version: "1.0"
+
+config:
+  trials_per_task: 1
+  timeout_seconds: 300
+  parallel: false
+  executor: copilot-sdk
+  model: claude-opus-4.6
+
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: スキルが依頼されたタスクを完了できたか
+
+graders:
+  - type: code
+    name: has_substantial_output
+    config:
+      assertions:
+        - "len(output) > 200"
+
+  - type: text
+    name: avoids_generic_exception_names
+    weight: 1.0
+    config:
+      not_contains:
+        - "BusinessException"
+        - "Error001"
+
+tasks:
+  - "tasks/*.yaml"
